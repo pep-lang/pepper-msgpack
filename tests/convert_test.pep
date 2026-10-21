@@ -138,7 +138,7 @@ encodes_a_struct_compactly() {
 }
 
 # The error decoding MessagePack `text` (hexadecimal) into a `T` gives.
-error_of<T>(text: String, unknown_keys: json.UnknownKeys = json.UnknownKeys.Ignore): String {
+error_of<T>(text: String, unknown_keys: msgpack.UnknownKeys = msgpack.UnknownKeys.Ignore): String {
     var result = msgpack.decode<T>(bytes_of(text), unknown_keys);
     if (result.is_ok()) {
         return "no error";
@@ -166,11 +166,11 @@ reports_conversion_errors_at_their_path() {
         error_of<Record>("82a2696401a56c6576656ca64d6964646c65"), "$.level: 'Middle' is not a case of 'Level'"
     );
     # {"id": 1, "zzz": 1}, with unknown keys rejected.
-    expect_equal(error_of<Record>("82a2696401a37a7a7a01", json.UnknownKeys.Reject), "$.zzz: unknown key 'zzz'");
+    expect_equal(error_of<Record>("82a2696401a37a7a7a01", msgpack.UnknownKeys.Reject), "$.zzz: unknown key 'zzz'");
     expect_equal(error_of<Record>("82a2696401a37a7a7a01"), "no error");
     # {"id": 1, 5: 1}: a struct's keys are strings.
     expect_equal(
-        error_of<Record>("82a26964010501", json.UnknownKeys.Reject), "$: unknown key 5: a struct's keys are strings"
+        error_of<Record>("82a26964010501", msgpack.UnknownKeys.Reject), "$: unknown key 5: a struct's keys are strings"
     );
     # A map for a scalar, and an array for a struct.
     expect_equal(error_of<int>("80"), "$: expected an integer, found a map");

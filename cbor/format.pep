@@ -13,6 +13,8 @@ import text;
 ## half `0xf97e00`). Lengths are always definite, and map entries keep
 ## their order. A `Tag` is written as a tag, and a MessagePack
 ## `Extension`, which CBOR has no form for, as a byte string of its data.
+## A `Simple` value from 20 to 31, which is not a simple value of its own,
+## is written as `undefined`.
 ##
 ## @typeParam T the type of the value
 ## @param value the value to write
@@ -92,21 +94,17 @@ _cbor_head(out: u8[], major: u8, n: ulong) {
         out.append(high | n as u8);
     } else if (n < 256) {
         out.append(high | 24);
-        _put(out, n, 1);
+        msgpack._put_big_endian(out, n, 1);
     } else if (n < 65536) {
         out.append(high | 25);
-        _put(out, n, 2);
+        msgpack._put_big_endian(out, n, 2);
     } else if (n < 4294967296) {
         out.append(high | 26);
-        _put(out, n, 4);
+        msgpack._put_big_endian(out, n, 4);
     } else {
         out.append(high | 27);
-        _put(out, n, 8);
+        msgpack._put_big_endian(out, n, 8);
     }
-}
-
-_put(out: u8[], n: ulong, count: ulong) {
-    msgpack._put_big_endian(out, n, count);
 }
 
 _cbor_write(out: u8[], value: msgpack.Value) {
@@ -171,8 +169,12 @@ _cbor_write(out: u8[], value: msgpack.Value) {
             _cbor_write(out, content);
         }
         Simple(n) => {
-            if (n < 24) {
+            if (n < 20) {
                 out.append(0xe0 | n);
+            } else if (n < 32) {
+                # 20 to 23 are false, true, null and undefined, and 24 to
+                # 31 have no well-formed encoding.
+                out.append(0xf7);
             } else {
                 out.append(0xf8);
                 out.append(n);
@@ -189,18 +191,18 @@ _cbor_float(out: u8[], n: double) {
     }
     if (!msgpack._fits_float(n)) {
         out.append(0xfb);
-        _put(out, unsafe_cast<ulong>(n), 8);
+        msgpack._put_big_endian(out, unsafe_cast<ulong>(n), 8);
         return;
     }
     var single = unsafe_cast<uint>(n as float) as ulong;
     var half = _cbor_half_of(single);
     if (half.is_value()) {
         out.append(0xf9);
-        _put(out, half.value(), 2);
+        msgpack._put_big_endian(out, half.value(), 2);
         return;
     }
     out.append(0xfa);
-    _put(out, single, 4);
+    msgpack._put_big_endian(out, single, 4);
 }
 
 # The half-precision bits of single-precision `bits`, when a half holds

@@ -10,7 +10,8 @@
 ## input, and nesting capped.
 ##
 ## - `encode`, `decode`: CBOR bytes to and from any convertible type
-## - `Value`, `DecodeError`: `msgpack`'s, under this module's name
+## - `Value`, `DecodeError`, `UnknownKeys`: `msgpack`'s, under this
+##   module's name
 ##
 ## @example
 ##     import msgpack.cbor;
@@ -35,7 +36,7 @@
 
 # This file only gathers the module's public API from its other files.
 
-export [Value, DecodeError] from msgpack;
+export [Value, DecodeError, UnknownKeys] from msgpack;
 
 import "format";
 

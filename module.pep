@@ -12,6 +12,8 @@
 ## - `Value`: a decoded value of no fixed type, or one built to encode
 ## - `to_value`, `from_value`: struct conversion to and from a `Value`
 ## - `DecodeError`: why decoding failed
+## - `UnknownKeys`: `json`'s choice of what decoding does with a map key that
+##   names no property
 ##
 ## @example
 ##     import msgpack;
@@ -40,6 +42,8 @@
 ##     }
 
 # This file only gathers the module's public API from its other files.
+
+export [UnknownKeys] from json;
 
 import "bytes";
 import "convert";

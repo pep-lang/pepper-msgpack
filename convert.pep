@@ -53,7 +53,7 @@ export to_value<T>(value: T): Value {
 ## leaves its property at its default, unless the property is marked
 ## `[Required]`, which makes it an error; a property marked `[Ignore]` is
 ## never read. A key that names no property is skipped, or with
-## `unknown_keys = json.UnknownKeys.Reject` is an error.
+## `unknown_keys = msgpack.UnknownKeys.Reject` is an error.
 ##
 ## An integer converts to an integer type it fits, and to `float` or
 ## `double`; a `u8[]` reads a `Binary` or an array of integers; `Null`

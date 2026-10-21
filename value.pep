@@ -50,7 +50,8 @@ export enum Value {
     ## A CBOR tag: its number and the item it tags.
     Tag(number: ulong, content: Value),
     ## A CBOR simple value other than `false`, `true`, `null` and
-    ## `undefined`: 0 to 19 or 32 to 255.
+    ## `undefined`: 0 to 19 or 32 to 255 (`cbor.encode` writes the others
+    ## as `undefined`).
     Simple(value: u8),
 
     ## Returns the value of the first entry whose key is the string `key`,

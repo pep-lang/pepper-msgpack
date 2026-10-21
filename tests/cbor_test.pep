@@ -97,6 +97,11 @@ reads_and_writes_simple_values() {
     check_cbor("f7", "undefined");
     check_cbor("f0", "simple(16)");
     check_cbor("f8ff", "simple(255)");
+    # 20 to 31 are not simple values of their own.
+    expect_equal(digest.to_hex(cbor.encode(cbor.Value.Simple(19))), "f3");
+    expect_equal(digest.to_hex(cbor.encode(cbor.Value.Simple(20))), "f7");
+    expect_equal(digest.to_hex(cbor.encode(cbor.Value.Simple(31))), "f7");
+    expect_equal(digest.to_hex(cbor.encode(cbor.Value.Simple(32))), "f820");
 }
 
 [Test]
