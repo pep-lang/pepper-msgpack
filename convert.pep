@@ -151,7 +151,7 @@ _value_map_of<TMap>(map: TMap): Value {
     }
     var entries = Array<(Value, Value)>();
     for (var (key, member) in map) {
-        entries.append(_value_entry(key, _to_value(member)));
+        entries.append((Value.String(key), _to_value(member)));
     }
     return Value.Map(entries);
 }
@@ -188,7 +188,7 @@ _to_value<T>(value: T): Value {
                     key = field.attribute<serialize.Name>().value;
                 }
                 if (present) {
-                    entries.append(_value_entry(key, _to_value(field.get(value))));
+                    entries.append((Value.String(key), _to_value(field.get(value))));
                 }
             }
             if (present) {
@@ -204,13 +204,6 @@ _to_value<T>(value: T): Value {
 # Whether struct reference `value` holds no object.
 _value_is_null<T>(value: T): bool {
     return value === __null;
-}
-
-# The entry `key: member`. A tuple literal in a generic function fails to
-# build when an element calls an overload (pep-lang/pepper#75), so the
-# generic encoders build their entries here.
-_value_entry(key: String, member: Value): (Value, Value) {
-    return (Value.String(key), member);
 }
 
 _value_of_ulong(value: ulong): Value {
